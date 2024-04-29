@@ -22,7 +22,7 @@ test("Static path test", async ({ page }) => {
   await expect(page).toHaveTitle(/about/);
 
   // Aliceというタイトルがあるか確認する
-  await expect(page.locator('css=h2')).toHaveText("About");
+  await expect(page.locator('css=h1')).toHaveText("About");
 
   // URLがhttp://localhost/aboutであるか確認する
   expect(page.url()).toBe(localhost + "/about");
