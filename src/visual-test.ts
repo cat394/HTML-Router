@@ -2,7 +2,11 @@ import "./components";
 import { RouteLink, RouteManager } from "./components";
 import { fallback, onAll } from "./constants";
 import { convertRouteConfig, path } from "./helpers";
-import { Hook, RouteConfig, RouteHookContext } from "./types";
+import { Hook, OnAllHookContext, RouteConfig, RouteHookContext } from "./types";
+
+type HomeCustomContext = {
+  title: string;
+};
 
 const head = document.querySelector("head");
 const titleElement = head?.querySelector("title");
@@ -18,21 +22,16 @@ const registerRouteComponent = async () => {
   }
 };
 
-type HomeCustomContext = {
-  title: string;
-};
-
-const link = document.createElement("route-link");
-link.setRouteData<typeof routeConfig, typeof routeConfig["users"]>("home", {
-  params: {
-    username: "alice",
-  }
-});
-
 function changeTitle(title: string) {
   if (!titleElement) return;
   titleElement.textContent = "HTML Router: " + title;
 }
+
+const onAllonBeforeNavigate: Hook = (
+  context: OnAllHookContext<typeof routeConfig>,
+) => {
+  changeTitle(context.routeContext.routeid);
+};
 
 const onBeforeNavigateAtHome: Hook = ({
   clonedNode,
@@ -41,13 +40,25 @@ const onBeforeNavigateAtHome: Hook = ({
   const aliceLink = clonedNode.querySelector<RouteLink>("#alice");
   const postsLink = clonedNode.querySelector<RouteLink>("#posts");
   if (aliceLink && postsLink) {
-    aliceLink.setRouteParams({ username: "Alice" });
-    postsLink.setRouteParams<(typeof routeConfig)["users"]>({
-      username: "Alice",
-      subpage: "posts",
-    });
-    customContext.title;
+    aliceLink.setRouteData<typeof routeConfig, (typeof routeConfig)["users"]>(
+      "users",
+      {
+        params: {
+          username: "Alice",
+        },
+      },
+    );
+    postsLink.setRouteData<typeof routeConfig, (typeof routeConfig)["users"]>(
+      "users",
+      {
+        params: {
+          username: "Alice",
+          subpage: "posts",
+        },
+      },
+    );
   }
+  console.log(customContext.title);
 };
 const onPreContentClearAtUsers: Hook = ({
   routeContext: { params },
@@ -55,34 +66,34 @@ const onPreContentClearAtUsers: Hook = ({
 }: RouteHookContext<(typeof routeConfig)["users"]>) => {
   const username = params.get("username");
   const subpage = params.get("subpage");
-  const titleField = clonedNode.querySelector("#title");
+  const title = clonedNode.querySelector("#title");
 
   function whenUserPage() {
     return username && !subpage;
   }
 
   function whenUserPostsPage() {
-    return username && subpage;
+    return username && subpage === "posts";
   }
 
-  if (!titleField) return;
+  if (!title) return;
 
   if (whenUserPage()) {
-    titleField.textContent = username!;
+    title.textContent = username!;
   }
 
   if (whenUserPostsPage()) {
-    titleField.textContent = username + "'s " + subpage;
+    title.textContent = username + "'s " + subpage;
   }
 };
 
 const routeConfig = {
   [onAll]: {
-    onBeforeNavigate: () => window.scroll(0, 0)
+    onBeforeNavigate: onAllonBeforeNavigate,
   },
   [fallback]: {
     PageNotFound: {
-      path: path`/404/${"pageStyle"}`
+      path: path`/404`,
     },
   },
   home: {
@@ -109,6 +120,5 @@ const routeConfig = {
     document.querySelector<RouteManager<typeof routeConfig>>("route-manager");
   mainRouteManager &&
     mainRouteManager.setRouteConfig(convertedRouteConfig) &&
-    mainRouteManager.initializeRoute() &&
-    mainRouteManager.goto("about");
+    mainRouteManager.initializeRoute();
 })();
