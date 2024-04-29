@@ -22,6 +22,13 @@ type HomeCustomContext = {
   title: string;
 };
 
+const link = document.createElement("route-link");
+link.setRouteData<typeof routeConfig, typeof routeConfig["users"]>("home", {
+  params: {
+    username: "alice",
+  }
+});
+
 function changeTitle(title: string) {
   if (!titleElement) return;
   titleElement.textContent = "HTML Router: " + title;
