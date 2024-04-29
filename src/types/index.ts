@@ -48,7 +48,9 @@ export type RouterPublicFunctionResult = {
   success: boolean;
   message: string;
 };
-
+export type SetRouteDataOptions<RouteDataType extends RouteData> = {
+  params?: ParamsObj<RouteDataType>;
+};
 // --------------------------------------------------
 // Hooks
 export type Hook<P extends BaseHookContext = any> = (context: P) => void;
@@ -124,8 +126,8 @@ export type RouteConfig = {
 export type FallbackRoute<T extends RouteConfig> = StringKeysOnly<
   T[FallbackSymbol]
 >;
-export type GotoParamsObj<RouteConfigType extends RouteConfig[string] = any> =
-  Partial<Record<RouteConfigType["path"]["params"][number][0], string>>;
+export type ParamsObj<RouteDataType extends RouteConfig[string] = any> =
+  Partial<Record<RouteDataType["path"]["params"][number][0], string | number>>;
 // --------------------------------------------------
 // Error
 export type RouteErrorDetail = {
