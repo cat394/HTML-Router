@@ -32,16 +32,6 @@ export class RouteLink extends HTMLElement {
       message: "Route ID set successfully",
     };
   }
-
-  public setRouteParams<P extends RouteConfig[string]>(
-    params: ParamsObj<P>,
-  ): RouterPublicFunctionResult {
-    this.routeParams = params;
-    return {
-      success: true,
-      message: "Route params set successfully",
-    };
-  }
 }
 
 customElements.define(ELEMENT_NAME.ROUTE_LINK, RouteLink);
