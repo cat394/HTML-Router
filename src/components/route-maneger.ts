@@ -215,7 +215,7 @@ export class RouteManager<
     return this._outletElement;
   }
 
-  get templateClone() {
+  get templateClone(): DocumentFragment {
     if (!this._templateClone) {
       throw new RoutingError({
         message: `It was not possible to clone a template element with data-routeid='${this.routeid}' attribute. It may have been intentionally deleted from outside.`,
