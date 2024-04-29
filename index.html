@@ -10,30 +10,30 @@
   <body>
     <route-manager>
       <header>
-        <h1>This is common layout</h1>
+        <b>This is common header</b>
       </header>
       <template data-fallbackid="PageNotFound">
-        <h2>404</h2>
+        <h1>404</h1>
         <p>Page not found</p>
       </template>
       <template data-routeid="home">
-        <h2>Home</h2>
+        <h1>Home</h1>
         <p>This is home page</p>
-        <route-link id="alice" data-routeid="users">Alice</route-link>
-        <route-link id="posts" data-routeid="users">Posts</route-link>
+        <route-link id="alice">Alice</route-link>
+        <route-link id="posts">Posts</route-link>
         <route-link data-routeid="about">About</route-link>
       </template>
       <template data-routeid="about">
-        <h2>About</h2>
+        <h1>About</h1>
         <p>This is about page</p>
       </template>
       <template data-routeid="users">
-        <h2>Users</h2>
+        <h1>Users</h1>
         <p>This is contact page</p>
         <h3 id="title"></h3>
       </template>
       <footer>
-        <p>This is common footer</p>
+        <small>This is common footer</small>
       </footer>
     </route-manager>
   </body>
