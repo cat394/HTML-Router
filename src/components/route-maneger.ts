@@ -23,7 +23,7 @@ import {
   RouteConfig,
   StringKeysOnly,
   FallbackRoute,
-  GotoParamsObj,
+  ParamsObj,
 } from "../types";
 import { RouteLink } from "./route-link";
 
@@ -228,14 +228,14 @@ export class RouteManager<
 
   private _setupEventListeners() {
     window.addEventListener("popstate", this._handlePopState);
-    this.addEventListener("click", this._handleDelegatedEvents);
-    this.addEventListener("keydown", this._handleDelegatedEvents);
+    this.addEventListener("click", this._handleRouteChange);
+    this.addEventListener("keydown", this._handleRouteChange);
   }
 
   private _removeEventListeners() {
     window.removeEventListener("popstate", this._handlePopState);
-    this.removeEventListener("click", this._handleDelegatedEvents);
-    this.removeEventListener("keydown", this._handleDelegatedEvents);
+    this.removeEventListener("click", this._handleRouteChange);
+    this.removeEventListener("keydown", this._handleRouteChange);
   }
 
   private _createOutletElement() {
@@ -293,14 +293,14 @@ export class RouteManager<
 
   public goto<T extends RouteConfig[string] = RouteConfig[string]>(
     targetRouteId: StringKeysOnly<RouteConfigType>,
-    targetRouteParams?: GotoParamsObj<T>,
+    targetRouteParams?: ParamsObj<T>,
   ): RouterPublicFunctionResult {
     return this._updateNextContent(targetRouteId, targetRouteParams);
   }
 
   public gotoFallback<T extends RouteConfig[string] = RouteConfig[string]>(
     fallbackId: FallbackRoute<RouteConfigType>,
-    fallbackParams?: GotoParamsObj<T>,
+    fallbackParams?: ParamsObj<T>,
   ): RouterPublicFunctionResult {
     this._isFallback = true;
     return this._updateNextContent(fallbackId, fallbackParams);
@@ -318,7 +318,7 @@ export class RouteManager<
 
   private _updateNextContent(
     routeid: StringKeysOnly<RouteConfigType> | FallbackRoute<RouteConfigType>,
-    paramsObj?: GotoParamsObj<RouteConfig[string]>,
+    paramsObj?: ParamsObj<RouteConfig[string]>,
   ): RouterPublicFunctionResult {
     try {
       const navigationId = this._prepareRouteChange();
@@ -433,7 +433,7 @@ export class RouteManager<
     };
   }
 
-  private _handleDelegatedEvents = (event: Event): void => {
+  private _handleRouteChange = (event: Event): void => {
     const target = event.target as HTMLElement;
     if (target instanceof RouteLink) {
       if (
