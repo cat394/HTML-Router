@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <script type="module" src="/src/main.ts"></script>
+  </head>
+  <body>
+    <route-manager>
+      <!-- <header> -->
+        <h1>This is common layout</h1>
+      </header>
+      <template data-fallbackid="PageNotFound">
+        <h2>404</h2>
+        <p>Page not found</p>
+      </template>
+      <template data-routeid="home">
+        <h2>Home</h2>
+        <p>This is home page</p>
+        <route-link id="alice" data-routeid="users">Alice</route-link>
+        <route-link id="posts" data-routeid="users">Posts</route-link>
+        <route-link data-routeid="about">About</route-link>
+      </template>
+      <template data-routeid="about">
+        <h2>About</h2>
+        <p>This is about page</p>
+      </template>
+      <template data-routeid="users">
+        <h2>Users</h2>
+        <p>This is contact page</p>
+        <h3 id="title"></h3>
+      </template>
+      <footer>
+        <p>This is common footer</p>
+      </footer>
+    </route-manager>
+  </body>
+</html>
+<html>
+  <body></body>
+</html>
+<route-manager>
+  <template data-fallback-id="PageNotFound">
+    <h2>404</h2>
+    <p>Page not found</p>
+  </template>
+  <template data-routeid="home">
+    <h2>Home</h2>
+    <p>This is home page</p>
+  </template>
+</route-manager>
