@@ -1,14 +1,14 @@
 import { ELEMENT_NAME } from "../constants";
 import {
-  GotoParamsObj,
+  ParamsObj,
   RouteConfig,
+  RouteData,
   RouterPublicFunctionResult,
+  SetRouteDataOptions,
 } from "../types";
 
-export class RouteLink<
-  T extends RouteConfig = RouteConfig,
-> extends HTMLElement {
-  public routeParams: GotoParamsObj = {};
+export class RouteLink extends HTMLElement {
+  public routeParams: ParamsObj = {};
 
   constructor() {
     super();
@@ -16,10 +16,17 @@ export class RouteLink<
     this.setAttribute("tabindex", "0");
   }
 
-  public setRouteId(
-    routeid: Extract<keyof T, string>,
+  public setRouteData<
+    RouteConfigType extends RouteConfig = RouteConfig,
+    RouteDataType extends RouteData = RouteData,
+  >(
+    routeid: Extract<keyof RouteConfigType, string>,
+    options: SetRouteDataOptions<RouteDataType>,
   ): RouterPublicFunctionResult {
     this.dataset.routeid = routeid;
+    if (options.params) {
+      this.routeParams = options.params;
+    }
     return {
       success: true,
       message: "Route ID set successfully",
@@ -27,7 +34,7 @@ export class RouteLink<
   }
 
   public setRouteParams<P extends RouteConfig[string]>(
-    params: GotoParamsObj<P>,
+    params: ParamsObj<P>,
   ): RouterPublicFunctionResult {
     this.routeParams = params;
     return {
