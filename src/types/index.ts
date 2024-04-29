@@ -1,10 +1,4 @@
-import { CustomEventMap } from "vite/types/customEvent.js";
-import {
-  type EVENT_NAME,
-  LIFE_CYCLE_NAME,
-  onAll,
-  fallback,
-} from "../constants";
+import { LIFE_CYCLE_NAME, onAll, fallback } from "../constants";
 import { convertRouteConfig, path } from "../helpers";
 
 // --------------------------------------------------
@@ -148,31 +142,4 @@ export enum RouteErrorType {
   TemplateNotFound = "TemplateNotFound",
   OutletNotFound = "OutletNotFound",
   UnknownError = "UnknownError",
-}
-
-// --------------------------------------------------
-// Events
-type RouterErrorEventDetail = {
-  message: string;
-};
-
-export type RouterEventMap = {
-  [EVENT_NAME.ROUTER_ERROR]: CustomEvent<RouterErrorEventDetail>;
-};
-
-type EventMap = HTMLElementEventMap & CustomEventMap & RouterEventMap;
-
-declare global {
-  interface HTMLElementEventMap {
-    addEventListener<K extends keyof EventMap>(
-      type: K,
-      listener: (this: HTMLElement, ev: EventMap[K]) => unknown,
-      options?: boolean | AddEventListenerOptions,
-    ): void;
-    removeEventListener<K extends keyof EventMap>(
-      type: K,
-      listener: (this: HTMLElement, ev: EventMap[K]) => unknown,
-      options?: boolean | EventListenerOptions,
-    ): void;
-  }
 }
