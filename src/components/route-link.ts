@@ -1,4 +1,4 @@
-import { ELEMENT_NAME } from "../constants";
+import { ELEMENT } from "../constants";
 import {
   ParamsObj,
   RouteConfig,
@@ -34,4 +34,4 @@ export class RouteLink extends HTMLElement {
   }
 }
 
-customElements.define(ELEMENT_NAME.ROUTE_LINK, RouteLink);
+customElements.define(ELEMENT.ROUTE_LINK, RouteLink);

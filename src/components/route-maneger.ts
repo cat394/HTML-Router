@@ -1,4 +1,4 @@
-import { ELEMENT_NAME, LIFE_CYCLE_NAME } from "../constants";
+import { ELEMENT, LIFE_CYCLE } from "../constants";
 import { RoutingError } from "../routing-error";
 import {
   buildPathFromRouteParams,
@@ -26,9 +26,6 @@ import {
   ParamsObj,
 } from "../types";
 import { RouteLink } from "./route-link";
-
-const { ON_Clear, ON_BEFORE_PRE_CONTENT_CLEAR, ON_BEFORE_NAVIGATE } =
-  LIFE_CYCLE_NAME;
 
 export class RouteManager<
   RouteConfigType extends RouteConfig = RouteConfig,
@@ -274,7 +271,7 @@ export class RouteManager<
         this.routeMap,
         firstSegment,
       ) as StringKeysOnly<RouteConfigType>;
-      if (this.routeData.path.hasdynamicPath) {
+      if (this.routeData.path.hasDynamicPath) {
         this._routeParamsMap = extractParamsMapFromCurrentPath(
           pathname,
           this.routeData.path.params,
@@ -310,7 +307,7 @@ export class RouteManager<
     const navigationId = Symbol();
     this._navigationid = navigationId;
     if (this._isInitialized) {
-      this._triggerLifecycleEvent(ON_Clear);
+      this._triggerLifecycleEvent(LIFE_CYCLE.ON_Clear);
       validateNavigationId(this._navigationid, navigationId);
     }
     return navigationId;
@@ -341,9 +338,9 @@ export class RouteManager<
     }
   }
 
-  private _generateTargetRoutePath() {
+  private _generateTargetRoutePath(): string {
     let targetPath = "";
-    if (this.routeData.path.hasdynamicPath) {
+    if (this.routeData.path.hasDynamicPath) {
       targetPath = buildPathFromRouteParams(
         this.routeData.path,
         this._routeParamsMap,
@@ -364,13 +361,13 @@ export class RouteManager<
   }
 
   private _startNextLifecycle(currentNavigationId: Symbol) {
-    this._triggerLifecycleEvent(ON_BEFORE_PRE_CONTENT_CLEAR);
+    this._triggerLifecycleEvent(LIFE_CYCLE.ON_BEFORE_PRE_CONTENT_CLEAR);
     validateNavigationId(this._navigationid, currentNavigationId);
     this.clearOutletContent();
-    this._triggerLifecycleEvent(ON_BEFORE_NAVIGATE);
+    this._triggerLifecycleEvent(LIFE_CYCLE.ON_BEFORE_NAVIGATE);
     validateNavigationId(this._navigationid, currentNavigationId);
     this._showNextContent();
-    this._triggerLifecycleEvent(LIFE_CYCLE_NAME.ON_AFTER_NAVIGATE);
+    this._triggerLifecycleEvent(LIFE_CYCLE.ON_AFTER_NAVIGATE);
   }
 
   public clearOutletContent() {
@@ -383,7 +380,7 @@ export class RouteManager<
     this.outletElement.appendChild(this.templateClone);
   }
 
-  private _triggerLifecycleEvent(hookName: LIFE_CYCLE_NAME) {
+  private _triggerLifecycleEvent(hookName: LIFE_CYCLE) {
     const routeHook = this.routeData[hookName];
 
     const hookContext: RouteHookContext = {
@@ -463,4 +460,4 @@ export class RouteManager<
   }
 }
 
-customElements.define(ELEMENT_NAME.ROUTE_MASTER, RouteManager);
+customElements.define(ELEMENT.ROUTE_MASTER, RouteManager);
