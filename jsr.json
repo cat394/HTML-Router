@@ -1,5 +1,5 @@
 {
-  "name": "@htmllover/htmlrouter",
+  "name": "@htmllover/html-router",
   "version": "0.0.1",
   "exports": "./src/mod.ts",
   "publish": {
