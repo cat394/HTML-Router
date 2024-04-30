@@ -1,5 +1,4 @@
-import { LIFE_CYCLE_NAME, onAll, fallback } from "../constants";
-import { convertRouteConfig, path } from "../helpers";
+import { LIFE_CYCLE, onAll, fallback } from "../constants";
 
 // --------------------------------------------------
 // Utils
@@ -36,8 +35,23 @@ export type RouteParamsSetting<RouteConfigType extends RouteConfig = any> = {
 };
 // --------------------------------------------------
 // Functions
-export type PathFunctionResult = ReturnType<typeof path>;
-export type ConvertRouteConfigResult = ReturnType<typeof convertRouteConfig>;
+export type PathFunctionResult<PathParamNames extends [...string[]] = [...string[]]> = {
+  stringified: string;
+  splitStringified: string[];
+  staticParts: TemplateStringsArray;
+  hasDynamicPath: boolean;
+  firstSegment: string;
+  params: [PathParamNames[number], number][];
+};
+export type ConvertRouteConfigResult = {
+  onAllConfig?: RouteConfig[typeof onAll];
+  fallbackMap: Map<
+    keyof RouteConfig[FallbackSymbol],
+    RouteConfig[FallbackSymbol][keyof RouteConfig[FallbackSymbol]]
+  >;
+  routeMap: Map<string, RouteConfig[string]>;
+};
+
 export type RouterPublicFunctionResult = {
   success: boolean;
   message: string;
@@ -54,7 +68,7 @@ type BaseHookContext = {
 };
 
 type Hooks<ContextType extends BaseHookContext> = Partial<
-  Record<LIFE_CYCLE_NAME, Hook<ContextType>>
+  Record<LIFE_CYCLE, Hook<ContextType>>
 >;
 
 export type RouteHookContext<
