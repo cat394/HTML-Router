@@ -1,0 +1,9 @@
+{
+  "name": "@htmllover/htmlrouter",
+  "version": "0.0.1",
+  "exports": "./src/mod.ts",
+  "publish": {
+    "include": ["src"],
+    "exclude": ["src/vite-env.d.ts", "src/types/types.d.ts"]
+  }
+}
