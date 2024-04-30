@@ -5,13 +5,12 @@ import {
   RouteConfig,
   RouteHookContext,
 } from "../types";
-import { ELEMENT_NAME, MARKER, fallback, onAll } from "../constants";
+import { ELEMENT, PATH_SEPARATOR, fallback, onAll } from "../constants";
 import { RouteManager } from "../components";
 
-const { PATH_SEPARATOR } = MARKER;
-const { OUTLET_MAIN } = ELEMENT_NAME;
-
-export const convertRouteConfig = (routeConfig: RouteConfig) => {
+export const convertRouteConfig = (
+  routeConfig: RouteConfig,
+): ConvertRouteConfigResult => {
   const {
     [onAll]: onAllConfig,
     [fallback]: fallbackConfig,
@@ -22,7 +21,10 @@ export const convertRouteConfig = (routeConfig: RouteConfig) => {
   return { onAllConfig, fallbackMap, routeMap };
 };
 
-export function* findNextIndex(source: string, target: string) {
+export function* findNextIndex(
+  source: string,
+  target: string,
+): Generator<number, void, undefined> {
   if (target === "") {
     return;
   }
@@ -37,7 +39,7 @@ export function* findNextIndex(source: string, target: string) {
   }
 }
 
-export const getPageName = (path: string) => {
+export const getPageName = (path: string): string => {
   if (!path.startsWith(PATH_SEPARATOR)) {
     path = PATH_SEPARATOR + path;
   }
@@ -90,8 +92,8 @@ export const buildPathFromRouteParams = (
 export const path = <PathParamNames extends [...string[]] = any>(
   staticParts: TemplateStringsArray,
   ...paramNames: PathParamNames
-) => {
-  const hasdynamicPath = paramNames.length > 0;
+): PathFunctionResult<PathParamNames> => {
+  const hasDynamicPath = paramNames.length > 0;
   const firstSegment = getPageName(staticParts[0]);
   let stringified = "";
   staticParts.forEach((staticPart, index) => {
@@ -113,7 +115,7 @@ export const path = <PathParamNames extends [...string[]] = any>(
     stringified,
     splitStringified,
     staticParts,
-    hasdynamicPath,
+    hasDynamicPath,
     firstSegment,
     params,
   };
@@ -122,7 +124,7 @@ export const path = <PathParamNames extends [...string[]] = any>(
 export const getMatchingRouteId = (
   routeConfig: ConvertRouteConfigResult["routeMap"],
   firstSegment: string,
-) => {
+): string | undefined => {
   let targetRouteId: string | undefined;
   for (const [routeid, routeData] of routeConfig) {
     if (routeData.path.firstSegment === firstSegment) {
@@ -137,7 +139,6 @@ export const updateHistory = (
   paramsMap: ParamsMap,
   path: string,
 ) => {
-  console.log({ routeid, paramsMap, path });
   window.history.pushState({ routeid, paramsMap }, "", path);
 };
 
@@ -161,7 +162,9 @@ export const getFallbackTemplate = (fallbackId: string) =>
   );
 
 export const getOutletElement = (routeMaster: RouteManager) =>
-  routeMaster.querySelector<HTMLDivElement>(`[data-outlet="${OUTLET_MAIN}"]`);
+  routeMaster.querySelector<HTMLDivElement>(
+    `[data-outlet="${ELEMENT.OUTLET_MAIN}"]`,
+  );
 
 export const getRouteData = (
   routeMap:
