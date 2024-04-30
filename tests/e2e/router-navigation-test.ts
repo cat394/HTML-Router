@@ -1,8 +1,13 @@
-import "./components";
-import { RouteLink, RouteManager } from "./components";
-import { fallback, onAll } from "./constants";
-import { convertRouteConfig, path } from "./helpers";
-import { Hook, OnAllHookContext, RouteConfig, RouteHookContext } from "./types";
+import "../../src/components";
+import { RouteLink, RouteManager } from "../../src/components";
+import { fallback, onAll } from "../../src/constants";
+import { convertRouteConfig, path } from "../../src/helpers";
+import {
+  Hook,
+  OnAllHookContext,
+  RouteConfig,
+  RouteHookContext,
+} from "../../src/types";
 
 type HomeCustomContext = {
   title: string;
