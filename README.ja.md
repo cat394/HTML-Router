@@ -433,11 +433,11 @@ npx jsr add @htmllover/html-router
 
    これで'/products/productA'というリンクへアクセスしコンソールを確認すると"Product: productA"と表示されます。
 
-   コンソールだけでは退屈なので実際にコンテンツを表示するように更新しましょう。フックは設定されたルートの template 要素の content プロパティの参照である **templateContent** とクローン化した template の参照である **cloneNode** も扱うことができます。
+   コンソールだけでは退屈なので実際にコンテンツを表示するように更新しましょう。フックは設定されたルートの template 要素の content プロパティの参照である **templateContent** とクローン化した template の参照である **clone** も扱うことができます。
 
    なぜ 2 つに分けられているのか疑問に思うかもしれません。
 
-   はい、実は templateContent で任意の要素のプロパティを更新してもそれはクローン化された DOM には反映されなかったり、実際の DOM にアクセスして操作を行うには cloneNode を使う必要があるからです。templateContent は私たちが目にしている HTML の`<template>`であり、cloneNode は実際に表示されるコンテンツを指すと考えれば簡単かもしれません。ほとんどのケースでは cloneNode を使えば問題はありません。
+   はい、実は templateContent で任意の要素のプロパティを更新してもそれはクローン化された DOM には反映されなかったり、実際の DOM にアクセスして操作を行うには clone を使う必要があるからです。templateContent は私たちが目にしている HTML の`<template>`であり、clone は実際に表示されるコンテンツを指すと考えれば簡単かもしれません。ほとんどのケースでは clone を使えば問題はありません。
 
    それでは製品タイトルが表示されるようにフックを更新してみましょう。
 
@@ -445,7 +445,7 @@ npx jsr add @htmllover/html-router
    const onBeforeNavigateAtProduct = (
      context: RouteHookContext<(typeof routeConfig)["product"]>,
    ): Hook => {
-     const title = context.cloneNode.querySelector("h1");
+     const title = context.clone.querySelector("h1");
      const productName = context.routeContext.params.get("productName");
      if (productName) {
        title.textContent = productName;
@@ -634,7 +634,7 @@ const onDestroyAtHome: Hook = (
 
 ### onAll のフック
 
-私たちは以前に onAll はすべてのルートで共通のロジックを実行したい場合に便利だと学びましたが、onAll のフックに渡される context オブジェクトは他のルートのフックと少し異なるため注意が必要です。**onAll のフックは各ルートの templateContent にも cloneNode にもアクセスできず**、代わりに routeContext.routeid から現在のルートの ID と動的セグメントの値を routeContext.params で受け取ります。
+私たちは以前に onAll はすべてのルートで共通のロジックを実行したい場合に便利だと学びましたが、onAll のフックに渡される context オブジェクトは他のルートのフックと少し異なるため注意が必要です。**onAll のフックは各ルートの templateContent にも clone にもアクセスできず**、代わりに routeContext.routeid から現在のルートの ID と動的セグメントの値を routeContext.params で受け取ります。
 
 また、以前にも説明したように各ルートの customContext の値にもアクセスできず、onAll で定義した customContext はすべてのルートで共有されずに onAll のライフサイクル内でのみアクセスできます。この仕様は onAll は極力すべてのルートで共通するロジックを定義するだけの場所であり、特定のルートの動作はそれぞれのルートで定義すべきだからです。
 
@@ -738,7 +738,7 @@ const routeConfig = {
 
 2. パフォーマンスが悪い
 
-   現状、cloneNode はページを移動するたびに新しく生成されます。そのため、キャッシュすることができずパフォーマンスに悪影響があります。ちなみに、一度生成したら特に変更を加えることのないコンテンツはフックの context オブジェクトに含まれる templateContent を使ってください。これにより、同じルートに複数回ユーザー訪れてもそのコンテンツは一度だけ DOM 操作を必要とし、それ以降はキャッシュされるためパフォーマンスがよくなります。
+   現状、clone はページを移動するたびに新しく生成されます。そのため、キャッシュすることができずパフォーマンスに悪影響があります。ちなみに、一度生成したら特に変更を加えることのないコンテンツはフックの context オブジェクトに含まれる templateContent を使ってください。これにより、同じルートに複数回ユーザー訪れてもそのコンテンツは一度だけ DOM 操作を必要とし、それ以降はキャッシュされるためパフォーマンスがよくなります。
 
 ## 今後行われる可能性がある新機能の内容
 

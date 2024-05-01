@@ -39,7 +39,7 @@ const onAllonBeforeNavigate: Hook = (
 };
 
 const onBeforeNavigateAtHome: Hook = ({
-  clonedNode,
+  clone: clonedNode,
   customContext,
 }: RouteHookContext<(typeof routeConfig)["home"], HomeCustomContext>) => {
   const aliceLink = clonedNode.querySelector<RouteLink>("#alice");
@@ -67,7 +67,7 @@ const onBeforeNavigateAtHome: Hook = ({
 };
 const onLoadAtUsers: Hook = ({
   routeContext: { params },
-  clonedNode,
+  clone: clonedNode,
 }: RouteHookContext<(typeof routeConfig)["users"]>) => {
   const username = params.get("username");
   const subpage = params.get("subpage");

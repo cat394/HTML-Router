@@ -134,7 +134,7 @@ export class RouteManager<
    * The cloned template element for the current route.
    * This is passed to a hook that fires on each route's lifecycle event.
    */
-  private _templateClone: DocumentFragment | undefined = undefined;
+  private _clone: DocumentFragment | undefined = undefined;
 
   /**
    * Initializes routing, sets up listeners and manages route changes.
@@ -216,7 +216,7 @@ export class RouteManager<
     if (this._isFallback) {
       this.routeTemplate = getFallbackTemplate(newRouteid);
       this.routeData = getRouteData(this.fallbackMap, newRouteid);
-      this._templateClone = document.importNode(
+      this._clone = document.importNode(
         this.routeTemplate.content,
         true,
       );
@@ -230,7 +230,7 @@ export class RouteManager<
     } else {
       this.routeTemplate = getRouteTemplate(newRouteid);
       this.routeData = getRouteData(this.routeMap, newRouteid);
-      this._templateClone = document.importNode(
+      this._clone = document.importNode(
         this.routeTemplate.content,
         true,
       );
@@ -275,7 +275,7 @@ export class RouteManager<
     if (!template) {
       throw new RoutingError({
         message: `Target template element not found. There may not be a template element with an attribute data-routeid='${this.routeid}' in the HTML.`,
-        place: "getter for templateClone",
+        place: "getter for clone",
         errorType: RouteErrorType.TemplateNotFound,
       });
     }
@@ -286,7 +286,7 @@ export class RouteManager<
     if (!this._routeTemplate) {
       throw new RoutingError({
         message: `Route template is not set.`,
-        place: "getter for templateClone",
+        place: "getter for clone",
         errorType: RouteErrorType.TemplateNotFound,
       });
     }
@@ -305,15 +305,15 @@ export class RouteManager<
     return this._outletElement;
   }
 
-  get templateClone(): DocumentFragment {
-    if (!this._templateClone) {
+  get clone(): DocumentFragment {
+    if (!this._clone) {
       throw new RoutingError({
         message: `It was not possible to clone a template element with data-routeid='${this.routeid}' attribute. It may have been intentionally deleted from outside.`,
-        place: "getter for templateClone",
+        place: "getter for clone",
         errorType: RouteErrorType.TemplateNotFound,
       });
     }
-    return this._templateClone;
+    return this._clone;
   }
 
   private _setupEventListeners() {
@@ -418,13 +418,13 @@ export class RouteManager<
 
   /**
    * Navigates to a new route based on the provided route ID and parameters.
-   * 
+   *
    * Example:
    * ```ts
    * const mainRouteManager = document.querySelector<RouteManager<typeof routeConfig>>("route-manager");
    * mainRouteManager.goto("home");
    * ```
-   * 
+   *
    * @param {StringKeysOnly<RouteConfigType>} targetRouteId - The route ID to navigate to.
    * @param {ParamsObj<T>} [targetRouteParams] - Parameters for the route.
    * @returns {RouterPublicFunctionResult} - The result of the operation.
@@ -438,7 +438,7 @@ export class RouteManager<
 
   /**
    * Navigates to the fallback route.
-   * 
+   *
    * Example:
    * ```ts
    * const mainRouteManager = document.querySelector<RouteManager<typeof routeConfig>>("route-manager");
@@ -580,7 +580,7 @@ export class RouteManager<
    * @returns {void}
    */
   private _showNextContent(): void {
-    this.outletElement.appendChild(this.templateClone);
+    this.outletElement.appendChild(this.clone);
   }
 
   /**
@@ -594,7 +594,7 @@ export class RouteManager<
 
     const hookContext: RouteHookContext = {
       templateContent: this.routeTemplate.content,
-      clonedNode: this.templateClone,
+      clone: this.clone,
       routeContext: {
         params: this._routeParamsMap,
       },

@@ -434,7 +434,7 @@ Now, let's revisit how to display dynamic content. To create dynamic content, yo
 
    When you access the link '/products/productA' and check the console, you will see "Product: productA" displayed.
 
-   It might be puzzling why they are separated into two. Well, the reason is that when you update properties of any element using templateContent, it may not reflect in the cloned DOM, and to access and manipulate the actual DOM, you need to use cloneNode. templateContent represents the `<template>` we see in HTML, while cloneNode refers to the actual displayed content. In most cases, using cloneNode should suffice.
+   It might be puzzling why they are separated into two. Well, the reason is that when you update properties of any element using templateContent, it may not reflect in the cloned DOM, and to access and manipulate the actual DOM, you need to use clone. templateContent represents the `<template>` we see in HTML, while clone refers to the actual displayed content. In most cases, using clone should suffice.
 
    Now, let's update the hook to display the product title.
 
@@ -442,7 +442,7 @@ Now, let's revisit how to display dynamic content. To create dynamic content, yo
    const onBeforeNavigateAtProduct = (
      context: RouteHookContext<(typeof routeConfig)["product"]>,
    ): Hook => {
-     const title = context.cloneNode.querySelector("h1");
+     const title = context.clone.querySelector("h1");
      const productName = context.routeContext.params.get("productName");
      if (productName) {
        title.textContent = productName;
@@ -631,7 +631,7 @@ By the way, the `customContext` of each route is isolated for each route and can
 
 ### onAll Hook
 
-We previously learned that `onAll` is useful when you want to execute common logic for all routes. However, the `context` object passed to the `onAll` hook is slightly different from other route hooks. **The `onAll` hook cannot access `templateContent` or `cloneNode` of each route**, instead, it receives the ID of the current route from `routeContext.routeid` and the values of dynamic segments from `routeContext.params`.
+We previously learned that `onAll` is useful when you want to execute common logic for all routes. However, the `context` object passed to the `onAll` hook is slightly different from other route hooks. **The `onAll` hook cannot access `templateContent` or `clone` of each route**, instead, it receives the ID of the current route from `routeContext.routeid` and the values of dynamic segments from `routeContext.params`.
 
 Also, as mentioned before, you cannot access the values of `customContext` for each route, and the `customContext` defined in `onAll` is only accessible within the `onAll` lifecycle and not shared across all routes. This specification ensures that `onAll` is a place to define common logic for all routes and specific route behaviors should be defined in each route.
 
@@ -735,7 +735,7 @@ From what you've seen in this guide, you probably found the router to be very in
 
 2. Poor performance
 
-   Currently, cloneNode is newly generated every time a page is moved, which cannot be cached and negatively impacts performance. By using the templateContent included in the context object of the hook for content that does not need to be changed once generated, even if users visit the same route multiple times, the content only requires DOM manipulation once and is then cached, improving performance.
+   Currently, clone is newly generated every time a page is moved, which cannot be cached and negatively impacts performance. By using the templateContent included in the context object of the hook for content that does not need to be changed once generated, even if users visit the same route multiple times, the content only requires DOM manipulation once and is then cached, improving performance.
 
 ## Contents of potential new features to be implemented in the future
 

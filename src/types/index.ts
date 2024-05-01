@@ -35,7 +35,9 @@ export type RouteParamsSetting<RouteConfigType extends RouteConfig = any> = {
 };
 // --------------------------------------------------
 // Functions
-export type PathFunctionResult<PathParamNames extends [...string[]] = [...string[]]> = {
+export type PathFunctionResult<
+  PathParamNames extends [...string[]] = [...string[]],
+> = {
   stringified: string;
   splitStringified: string[];
   staticParts: TemplateStringsArray;
@@ -76,7 +78,7 @@ export type RouteHookContext<
   CustomContextType extends CustomContext = CustomContext,
 > = {
   readonly templateContent: DocumentFragment;
-  readonly clonedNode: DocumentFragment;
+  readonly clone: DocumentFragment;
   readonly routeContext: {
     readonly params: EachRouteConfigType["path"] extends PathFunctionResult
       ? ParamsMap<EachRouteConfigType["path"]["params"][number][0]>
