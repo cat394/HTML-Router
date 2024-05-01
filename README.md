@@ -22,6 +22,12 @@ Unlike traditional component-based or directory-based approaches, it works by pr
 
    With Typescript typing, dynamic parameters are automatically extracted and typed by defining a configuration file, so you don't need to separately define dynamic parameters unless necessary.
 
+## Installation
+
+```bash
+npx jsr add @htmllover/html-router
+```
+
 ## Guide (Beginner's Edition)
 
 Here is a guide from the initial state of a Vanilla Typescript project in Vite. We will explain the basic usage step by step.
