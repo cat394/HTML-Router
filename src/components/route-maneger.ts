@@ -27,6 +27,30 @@ import {
 } from "../types";
 import { RouteLink } from "./route-link";
 
+/**
+ *
+ *  RouteManager is a component for managing the navigation of an application.
+ *  It is placed in HTML using the `<route-manager>` tag, with a corresponding `<template>` tag for each route.
+ * By defining a `<template>` tag, you can display the appropriate content when a particular route is activated.
+ *
+ *
+ *
+ *
+ * 例:
+ * ```html
+ * <route-manager>
+ *   <template data-fallbackid="PageNotFound">
+ *     <h1>404: Page not found</h1>
+ *   </template>
+ *   <template data-routeid="home">
+ *     <h1>Home</h1>
+ *     <p>Here is home page</p>
+ *   </template>
+ * </route-manager>
+ * ```
+ *
+ * このコンポーネントは、動的なURLセグメントの解析やルートに応じたテンプレートの表示切替を自動的に行います。
+ */
 export class RouteManager<
   RouteConfigType extends RouteConfig = RouteConfig,
 > extends HTMLElement {
@@ -307,7 +331,7 @@ export class RouteManager<
     const navigationId = Symbol();
     this._navigationid = navigationId;
     if (this._isInitialized) {
-      this._triggerLifecycleEvent(LIFE_CYCLE.ON_Clear);
+      this._triggerLifecycleEvent(LIFE_CYCLE.ON_Destroy);
       validateNavigationId(this._navigationid, navigationId);
     }
     return navigationId;
@@ -361,7 +385,7 @@ export class RouteManager<
   }
 
   private _startNextLifecycle(currentNavigationId: Symbol) {
-    this._triggerLifecycleEvent(LIFE_CYCLE.ON_BEFORE_PRE_CONTENT_CLEAR);
+    this._triggerLifecycleEvent(LIFE_CYCLE.ON_LOAD);
     validateNavigationId(this._navigationid, currentNavigationId);
     this.clearOutletContent();
     this._triggerLifecycleEvent(LIFE_CYCLE.ON_BEFORE_NAVIGATE);
@@ -431,7 +455,7 @@ export class RouteManager<
   }
 
   private _handleRouteChange = (event: Event): void => {
-    const target = event.target as HTMLElement;
+    const target = event.currentTarget as HTMLElement;
     if (target instanceof RouteLink) {
       if (
         event.type === "click" ||
@@ -443,10 +467,10 @@ export class RouteManager<
     }
   };
 
-  private _routeLinkActivated(target: RouteLink): void {
-    const nextRouteId = target.dataset
+  private _routeLinkActivated(routeLink: RouteLink): void {
+    const nextRouteId = routeLink.dataset
       .routeid as StringKeysOnly<RouteConfigType>;
-    const nextRouteParams = target.routeParams;
+    const nextRouteParams = routeLink.routeParams;
     if (nextRouteId) {
       this.goto(nextRouteId, nextRouteParams);
     } else {

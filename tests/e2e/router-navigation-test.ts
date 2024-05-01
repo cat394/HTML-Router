@@ -65,13 +65,14 @@ const onBeforeNavigateAtHome: Hook = ({
   }
   console.log(customContext.title);
 };
-const onPreContentClearAtUsers: Hook = ({
+const onLoadAtUsers: Hook = ({
   routeContext: { params },
   clonedNode,
 }: RouteHookContext<(typeof routeConfig)["users"]>) => {
   const username = params.get("username");
   const subpage = params.get("subpage");
   const title = clonedNode.querySelector("#title");
+  if (!title) return;
 
   function whenUserPage() {
     return username && !subpage;
@@ -80,8 +81,6 @@ const onPreContentClearAtUsers: Hook = ({
   function whenUserPostsPage() {
     return username && subpage === "posts";
   }
-
-  if (!title) return;
 
   if (whenUserPage()) {
     title.textContent = username!;
@@ -104,7 +103,7 @@ const routeConfig = {
   home: {
     path: path`/`,
     onBeforeNavigate: onBeforeNavigateAtHome,
-    onClear: () => console.log("leaving home"),
+    onDestroy: () => console.log("leave home"),
     customContext: {
       title: "hello",
     } satisfies HomeCustomContext,
@@ -114,7 +113,7 @@ const routeConfig = {
   },
   users: {
     path: path`/users/${"username"}/${"subpage"}/${"postId"}`,
-    onBeforePreContentClear: onPreContentClearAtUsers,
+    OnLoad: onLoadAtUsers,
   },
 } satisfies RouteConfig;
 

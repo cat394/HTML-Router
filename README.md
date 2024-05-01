@@ -321,7 +321,7 @@ HTML Router はシンプルかつ簡単に SPA のルーティングを構築す
 
 このように、各ルートに事前に設定された関数が呼び出されるタイミングを**ライフサイクル**と呼び、これらに関連づけられた関数を**フック**と呼んでいます。ライフサイクルは以下の 4 つになります。
 
-1. onBeforePreContentClear
+1. onLoad
 
    このライフサイクルに関連付けられたフックはルートのコンテンツが表示される前かつ、以前のコンテンツが消される前に関数を実行します。この関数の実行時に動的なコンテンツをクローンされたノードに生成することで、以前のコンテンツが消されてからこのルートのコンテンツが表示されるまでのホワイトアウトした状態の時間を縮めることができます。
 
@@ -333,7 +333,7 @@ HTML Router はシンプルかつ簡単に SPA のルーティングを構築す
 
    このライフサイクルに関連付けられたフックはルートのコンテンツが表示された後に実行されます。これはそのルートのコンテンツとは直接関係しない、例えば分析などのコードを実行するのが良いかもしれません。
 
-4. onClear
+4. onDestroy
 
    このライフサイクルに関連付けられたフックはルートのコンテンツが削除された後に実行されます。これはそのルートで実行していたイベントリスナーなどのクリーンアップ処理を行うのに最適です。
 
@@ -344,12 +344,12 @@ HTML Router はシンプルかつ簡単に SPA のルーティングを構築す
      // フォールバックは省略している
      home: {
        path: path`/`,
-       onClear: () => console.log("Left home"),
+       onDestroy: () => console.log("Leave home"),
      },
    } satisfies RouteConfig;
    ```
 
-これでホームページを離脱し新しいページへ行く毎に、コンソールに`Left home`と表示されます。他のフックも同様のやり方で定義できます。
+これでホームページを離脱し新しいページへ行く毎に、コンソールに`Leave home`と表示されます。他のフックも同様のやり方で定義できます。
 
 #### 動的セグメントを扱う方法
 
@@ -480,7 +480,7 @@ const routeConfig = {
 1. setRouteData()
 
    これは移動するルート ID を自身の data-routeid 属性に付与したり、オプションの第二引数の params オブジェクトを自身の routeParams にセットします。
-  
+
    ジェネリック型の初めにはルート設定オブジェクトを受け取り、params を定義する際にはそのルートデータの型を渡すことで型安全に定義できます。
 
 #### 使用例
@@ -507,7 +507,7 @@ link.setRouteData<typeof routeConfig, (typeof routeConfig)["product"]>(
 
 ### CustomContext
 
-時々、一連のライフサイクルフックで何かデータを共有したいときがあります。例えば、onBeforeNavigate で setTimeout()を使ってタイマーを設定し、そのタイマー ID を onClear で clearTimeout()に渡したいときなどクリーンアップ処理が必要な場面や何かのデータをすべてのライフサイクルで使えるようにしたい場合もあるかもしれません。
+時々、一連のライフサイクルフックで何かデータを共有したいときがあります。例えば、onBeforeNavigate で setTimeout()を使ってタイマーを設定し、そのタイマー ID を onDestroy で clearTimeout()に渡したいときなどクリーンアップ処理が必要な場面や何かのデータをすべてのライフサイクルで使えるようにしたい場合もあるかもしれません。
 
 その時に役立つのが **customContext** です。customContext はすべてのライフサイクルで共有しその初期値をライフサイクルの間で変更することが可能なオブジェクトです。
 
@@ -536,7 +536,7 @@ const onBeforeNavigateAtHome: Hook = (
   console.log("Color", context.customContext.color);
 };
 
-const onClearAtHome: Hook = (
+const onDestroyAtHome: Hook = (
   context: RouteHookContext<(typeof routeConfig)["home"]>,
 ) => {
   console.log("Color", context.customContext.color);
@@ -551,7 +551,7 @@ const routeConfig = {
   home: {
     path: path`/`,
     onBeforeNavigate: onBeforeNavigateAtHome,
-    onClear: onClearAtHome,
+    onDestroy: onDestroyAtHome,
     customContext: {
       color: "red",
     },
@@ -579,7 +579,7 @@ const routeConfig = {
   home: {
   path: path`/`,
   onBeforeNavigate: onBeforeNavigateAtHome,
-  onClear: onClearAtHome,
+  onDestroy: onDestroyAtHome,
   customContext: {
     color: 'red'
   } satisfies HomeCustomContext // check customContext type
@@ -595,7 +595,7 @@ const onBeforeNavigateAtHome: Hook = (
   console.log("Color", context.customContext.color);
 };
 
-const onClearAtHome: Hook = (
+const onDestroyAtHome: Hook = (
   context: RouteHookContext<(typeof routeConfig)["home"]>,
   HomeCustomContex,
 ) => {
@@ -614,7 +614,7 @@ const onBeforeNavigateAtHome: Hook = (
   context.customContext.color = "blue"; // change value
 };
 
-const onClearAtHome: Hook = (
+const onDestroyAtHome: Hook = (
   context: RouteHookContext<(typeof routeConfig)["home"]>,
   HomeCustomContex,
 ) => {

@@ -4,10 +4,10 @@ export const fallback = Symbol("fallback");
 export const PATH_SEPARATOR = "/";
 
 export enum LIFE_CYCLE {
-  ON_BEFORE_PRE_CONTENT_CLEAR = "onBeforePreContentClear",
+  ON_LOAD = "OnLoad",
   ON_BEFORE_NAVIGATE = "onBeforeNavigate",
   ON_AFTER_NAVIGATE = "onAfterNavigate",
-  ON_Clear = "onClear",
+  ON_Destroy = "onDestroy",
 }
 
 export enum ELEMENT {
