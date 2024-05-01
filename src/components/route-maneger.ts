@@ -29,14 +29,11 @@ import { RouteLink } from "./route-link";
 
 /**
  *
- *  RouteManager is a component for managing the navigation of an application.
- *  It is placed in HTML using the `<route-manager>` tag, with a corresponding `<template>` tag for each route.
+ * RouteManager is a component for managing the navigation of an application.
+ * It is placed in HTML using the `<route-manager>` tag, with a corresponding `<template>` tag for each route.
  * By defining a `<template>` tag, you can display the appropriate content when a particular route is activated.
  *
- *
- *
- *
- * 例:
+ * Example:
  * ```html
  * <route-manager>
  *   <template data-fallbackid="PageNotFound">
@@ -49,35 +46,107 @@ import { RouteLink } from "./route-link";
  * </route-manager>
  * ```
  *
- * このコンポーネントは、動的なURLセグメントの解析やルートに応じたテンプレートの表示切替を自動的に行います。
  */
 export class RouteManager<
   RouteConfigType extends RouteConfig = RouteConfig,
 > extends HTMLElement {
+  /**
+   * Indicates whether the component has been initialized.
+   * This is used to determine whether the current route is the initial route.
+   */
   private _isInitialized = false;
+
+  /**
+   * Indicates whether the popstate event has occurred.
+   * This is used to determine whether the current route change is due to a popstate event.
+   */
   private _isPopstateEvent = false;
+
+  /**
+   * Indicates whether the current route is a fallback route.
+   * This is used to determine whether the current route is a fallback route.
+   */
   private _isFallback = false;
+
+  /**
+   * The navigation ID for the current route change.
+   * This is used to validate the current route change.
+   * This prevents multiple navigation conflicts.
+   */
   private _navigationid = Symbol();
+
+  /**
+   * The onAll configuration object from the route configuration.
+   * This is used to trigger lifecycle events for all routes.
+   */
   private _onAllConfig?: ConvertRouteConfigResult["onAllConfig"] = undefined;
+
+  /**
+   * The fallback map from the converted route configuration.
+   * This is used to navigate to fallback routes.
+   * If the isFallback flag is true, routes will be selected from this map.
+   */
   private _fallbackMap: ConvertRouteConfigResult["fallbackMap"] | undefined =
     undefined;
+
+  /**
+   * The route map from the converted route configuration.
+   * This is used to navigate to routes.
+   */
   private _routeMap: ConvertRouteConfigResult["routeMap"] | undefined =
     undefined;
+
+  /**
+   * The element to insert content for each route.
+   * This is typically a div element with the data-outlet attribute set to 'main'.
+   * If the element does not exist, it will be created automatically.
+   */
   private _outletElement: HTMLDivElement | null = null;
+
+  /**
+   * The template element for the current route.
+   * This is used to display the content for the current route.
+   */
   private _routeTemplate: HTMLTemplateElement | null = null;
+
+  /**
+   * The route ID for the current route.
+   * This is used to determine the current route.
+   */
   private _routeid:
     | StringKeysOnly<RouteConfigType>
     | FallbackRoute<RouteConfigType>
     | undefined = undefined;
+
+  /**
+   * The route data for the current route.
+   * This is used to trigger lifecycle events for the current route.
+   */
   private _routeData: RouteData | undefined = undefined;
+
+  /**
+   * The parameters map for the current route.
+   * This is used to store the parameters for the current route.
+   */
   private _routeParamsMap: ParamsMap = new Map();
+
+  /**
+   * The cloned template element for the current route.
+   * This is passed to a hook that fires on each route's lifecycle event.
+   */
   private _templateClone: DocumentFragment | undefined = undefined;
 
+  /**
+   * Initializes routing, sets up listeners and manages route changes.
+   */
   connectedCallback() {
     this._createOutletElement();
     this._setupEventListeners();
   }
 
+  /**
+   * Cleans up event listeners when the component is removed from the DOM.
+   */
   disconnectedCallback() {
     this._removeEventListeners();
   }
@@ -259,6 +328,11 @@ export class RouteManager<
     this.removeEventListener("keydown", this._handleRouteChange);
   }
 
+  /**
+   * Creates a div element with the data-outlet attribute set to 'main' if it does not already exist.
+   *
+   * @returns {void}
+   */
   private _createOutletElement() {
     let outletElement = getOutletElement(this);
     if (!outletElement) {
@@ -271,6 +345,30 @@ export class RouteManager<
     }
   }
 
+  /**
+   * Sets the converted route configuration object or map using the convertedRouteConfig function.
+   *
+   * Example:
+   * ```ts
+   * const routeConfig = {
+   *  [fallback]: {
+   *   PageNotFound: {
+   *    path: path`/404`
+   *   }
+   *  },
+   *  home: {
+   *   path: path`/`
+   *  }
+   * } satisfies RouteConfig;
+   *
+   * const mainRouteManager = document.querySelector<RouteManager<typeof routeConfig>>("route-manager");
+   * const convertedRouteConfig = convertRouteConfig(routeConfig);
+   * mainRouteManager.setRouteConfig(convertedRouteConfig);
+   * ```
+   *
+   * @param {ConvertRouteConfigResult} config - The route configuration object.
+   * @returns {RouterPublicFunctionResult} - The result of the operation.
+   */
   public setRouteConfig(
     config: ConvertRouteConfigResult,
   ): RouterPublicFunctionResult {
@@ -287,6 +385,12 @@ export class RouteManager<
     }
   }
 
+  /**
+   * Initializes the route based on the current URL.
+   * This is typically called when the component is first mounted.
+   *
+   * @returns {RouterPublicFunctionResult} - The result of the operation.
+   */
   public initializeRoute(): RouterPublicFunctionResult {
     try {
       const pathname = window.location.pathname;
@@ -312,6 +416,19 @@ export class RouteManager<
     }
   }
 
+  /**
+   * Navigates to a new route based on the provided route ID and parameters.
+   * 
+   * Example:
+   * ```ts
+   * const mainRouteManager = document.querySelector<RouteManager<typeof routeConfig>>("route-manager");
+   * mainRouteManager.goto("home");
+   * ```
+   * 
+   * @param {StringKeysOnly<RouteConfigType>} targetRouteId - The route ID to navigate to.
+   * @param {ParamsObj<T>} [targetRouteParams] - Parameters for the route.
+   * @returns {RouterPublicFunctionResult} - The result of the operation.
+   */
   public goto<T extends RouteConfig[string] = RouteConfig[string]>(
     targetRouteId: StringKeysOnly<RouteConfigType>,
     targetRouteParams?: ParamsObj<T>,
@@ -319,6 +436,19 @@ export class RouteManager<
     return this._updateNextContent(targetRouteId, targetRouteParams);
   }
 
+  /**
+   * Navigates to the fallback route.
+   * 
+   * Example:
+   * ```ts
+   * const mainRouteManager = document.querySelector<RouteManager<typeof routeConfig>>("route-manager");
+   * mainRouteManager.gotoFallback("PageNotFound");
+   * ```
+   *
+   * @param {FallbackRoute<RouteConfigType>} fallbackId - The fallback route ID.
+   * @param {ParamsObj<T>} [fallbackParams] - Parameters for the fallback route.
+   * @returns {RouterPublicFunctionResult} - The result of the operation.
+   */
   public gotoFallback<T extends RouteConfig[string] = RouteConfig[string]>(
     fallbackId: FallbackRoute<RouteConfigType>,
     fallbackParams?: ParamsObj<T>,
@@ -327,7 +457,13 @@ export class RouteManager<
     return this._updateNextContent(fallbackId, fallbackParams);
   }
 
-  private _prepareRouteChange() {
+  /**
+   * Prepares the route for navigation.
+   * This is used to validate the current route change and prevent multiple navigation conflicts.
+   *
+   * @returns {Symbol} - The navigation ID.
+   */
+  private _prepareRouteChange(): Symbol {
     const navigationId = Symbol();
     this._navigationid = navigationId;
     if (this._isInitialized) {
@@ -337,6 +473,16 @@ export class RouteManager<
     return navigationId;
   }
 
+  /**
+   * Updates the content for the next route.
+   * This is used to navigate to the next route and trigger lifecycle events.
+   * If the route is a fallback route, the fallback template is used.
+   *
+   * @param {StringKeysOnly<RouteConfigType> | FallbackRoute<RouteConfigType>} routeid - The route or fallback ID to navigate to.
+   *
+   * @param paramsObj - Parameters for the route.
+   * @returns {RouterPublicFunctionResult} - The result of the operation.
+   */
   private _updateNextContent(
     routeid: StringKeysOnly<RouteConfigType> | FallbackRoute<RouteConfigType>,
     paramsObj?: ParamsObj<RouteConfig[string]>,
@@ -362,6 +508,12 @@ export class RouteManager<
     }
   }
 
+  /**
+   * Generates the path for the target route.
+   * This is used to determine the path for the target route based on the route parameters.
+   *
+   * @returns {string} - The path for the target route.
+   */
   private _generateTargetRoutePath(): string {
     let targetPath = "";
     if (this.routeData.path.hasDynamicPath) {
@@ -375,16 +527,31 @@ export class RouteManager<
     return targetPath;
   }
 
+  /**
+   * Updates the route data cache for the next route.
+   *
+   * @param {StringKeysOnly<RouteConfigType> | FallbackRoute<RouteConfigType>} nextRouteId - The route or fallback ID to navigate to.
+   *
+   * @returns {void}
+   * */
   private _updateNextRouteDataCache(
     nextRouteId:
       | StringKeysOnly<RouteConfigType>
       | FallbackRoute<RouteConfigType>,
-  ) {
+  ): void {
     if (this.routeid === nextRouteId) return;
     this.routeid = nextRouteId;
   }
 
-  private _startNextLifecycle(currentNavigationId: Symbol) {
+  /**
+   * Starts the lifecycle for the next route.
+   * Verify that new navigation occurs after each lifecycle event.
+   * If a new navigation has occurred, suspend operations after that lifecycle event.
+   *
+   * @param {Symbol} currentNavigationId - The current navigation ID.
+   * @returns {void}
+   */
+  private _startNextLifecycle(currentNavigationId: Symbol): void {
     this._triggerLifecycleEvent(LIFE_CYCLE.ON_LOAD);
     validateNavigationId(this._navigationid, currentNavigationId);
     this.clearOutletContent();
@@ -394,17 +561,35 @@ export class RouteManager<
     this._triggerLifecycleEvent(LIFE_CYCLE.ON_AFTER_NAVIGATE);
   }
 
-  public clearOutletContent() {
+  /**
+   * Clears the content of the outlet element.
+   * This is used to remove the content for the current route.
+   * This is typically called before displaying the content for the next route.
+   *
+   * @returns {void}
+   */
+  public clearOutletContent(): void {
     while (this.outletElement.firstChild) {
       this.outletElement.removeChild(this.outletElement.firstChild);
     }
   }
 
-  private _showNextContent() {
+  /**
+   * Shows the content for the next route.
+   *
+   * @returns {void}
+   */
+  private _showNextContent(): void {
     this.outletElement.appendChild(this.templateClone);
   }
 
-  private _triggerLifecycleEvent(hookName: LIFE_CYCLE) {
+  /**
+   * Triggers a lifecycle event for the current route.
+   *
+   * @param {LIFE_CYCLE} hookName - The lifecycle event to trigger.
+   * @returns {void}
+   */
+  private _triggerLifecycleEvent(hookName: LIFE_CYCLE): void {
     const routeHook = this.routeData[hookName];
 
     const hookContext: RouteHookContext = {
@@ -430,12 +615,26 @@ export class RouteManager<
     routeHook?.(hookContext);
   }
 
-  private _handlePopState = () => {
+  /**
+   * Handles the popstate event.
+   * This is used to handle route changes when the back or forward button is clicked.
+   *
+   * @returns {void}
+   */
+  private _handlePopState = (): void => {
     this._isPopstateEvent = true;
     const { routeid, paramsMap } = window.history.state;
     this.goto(routeid, paramsMap);
   };
 
+  /**
+   * Handles errors that occur during routing.
+   * This is used to log errors and return an error message to the user.
+   *
+   * @param {string} title - The title of the error.
+   * @param {unknown} error - The error that occurred.
+   * @returns {RouterPublicFunctionResult} - The result of the operation.
+   */
   private _handleError(
     title: string,
     error: unknown,
@@ -454,6 +653,12 @@ export class RouteManager<
     };
   }
 
+  /**
+   * Handles route changes when a <route-link> element is clicked.
+   *
+   * @param {Event} event - The event that triggered the route change.
+   * @returns {void}
+   */
   private _handleRouteChange = (event: Event): void => {
     const target = event.target as HTMLElement;
     if (target instanceof RouteLink) {
@@ -467,6 +672,12 @@ export class RouteManager<
     }
   };
 
+  /**
+   * Handles route changes when a <route-link> element is clicked.
+   *
+   * @param {RouteLink} routeLink - The <route-link> element that was clicked.
+   * @returns {void}
+   */
   private _routeLinkActivated(routeLink: RouteLink): void {
     const nextRouteId = routeLink.dataset
       .routeid as StringKeysOnly<RouteConfigType>;
