@@ -113,7 +113,7 @@ const routeConfig = {
   },
   users: {
     path: path`/users/${"username"}/${"subpage"}/${"postId"}`,
-    OnLoad: onLoadAtUsers,
+    onLoad: onLoadAtUsers,
   },
 } satisfies RouteConfig;
 
