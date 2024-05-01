@@ -187,9 +187,9 @@ npx jsr add @htmllover/html-router
         const convertedRouteConfig = convertRouteConfig(routeConfig);
         await registerRouteComponent();
         const mainRouteManager = document.querySelector("route-manager");
-        mainRouteMaster &&
-          mainRouteMaster.setRouteConfig(convertedRouteConfig) &&
-          mainRouteMaster.initializeRoute();
+        mainRouteManager &&
+          mainRouteManager.setRouteConfig(convertedRouteConfig) &&
+          mainRouteManager.initializeRoute();
       })();
       ```
 
