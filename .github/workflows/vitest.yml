@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Run Vitest tests
-        run: npx vitest run --runInBand
+        run: npx vitest run
       - uses: actions/upload-artifact@v4
         if: always()
         with:
