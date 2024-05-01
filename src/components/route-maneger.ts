@@ -455,7 +455,7 @@ export class RouteManager<
   }
 
   private _handleRouteChange = (event: Event): void => {
-    const target = event.currentTarget as HTMLElement;
+    const target = event.target as HTMLElement;
     if (target instanceof RouteLink) {
       if (
         event.type === "click" ||
