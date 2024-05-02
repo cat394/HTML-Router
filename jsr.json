@@ -1,6 +1,6 @@
 {
   "name": "@htmllover/html-router",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "exports": "./src/mod.ts",
   "publish": {
     "include": ["src", "README.md", "jsr.json", "LICENCE"],
