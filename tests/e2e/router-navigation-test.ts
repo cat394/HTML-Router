@@ -16,7 +16,7 @@ type HomeCustomContext = {
 const head = document.querySelector("head");
 const titleElement = head?.querySelector("title");
 
-const registerRouteComponent = async () => {
+const waitRegisteringRouteComponent = async () => {
   try {
     await Promise.allSettled([
       customElements.whenDefined("route-manager"),
@@ -119,7 +119,7 @@ const routeConfig = {
 
 (async function setupRouter() {
   const convertedRouteConfig = convertRouteConfig(routeConfig);
-  await registerRouteComponent();
+  await waitRegisteringRouteComponent();
   const mainRouteManager =
     document.querySelector<RouteManager<typeof routeConfig>>("route-manager");
   mainRouteManager &&

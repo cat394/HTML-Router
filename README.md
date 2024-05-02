@@ -138,8 +138,7 @@ Here is a guide from the initial state of a Vanilla Typescript project in Vite. 
    ```html
    <route-manager>
      <template data-fallbackid="PageNotFound">
-       <h1>404</h1>
-       <p>Page not found</p>
+       <h1>404: Page not found</h1>
      </template>
      <template data-routeid="home">
        <h1>Home</h1>
@@ -167,7 +166,7 @@ Here is a guide from the initial state of a Vanilla Typescript project in Vite. 
       Since custom elements are loaded asynchronously, you must wait for `<route-manager>` to be properly registered as a custom element before passing the route configuration object to `<route-manager>`. Therefore, add the following code. Note: `<route-link>` will be used later.
 
       ```ts
-      const registerRouteComponent = async () => {
+      const waitRegisteringRouteComponent = async () => {
         try {
           await Promise.allSettled([
             customElements.whenDefined("route-manager"),
@@ -185,7 +184,7 @@ Here is a guide from the initial state of a Vanilla Typescript project in Vite. 
       ```ts
       (async function setupRouter() {
         const convertedRouteConfig = convertRouteConfig(routeConfig);
-        await registerRouteComponent();
+        await waitRegisteringRouteComponent();
         const mainRouteManager = document.querySelector("route-manager");
         mainRouteManager &&
           mainRouteManager.setRouteConfig(convertedRouteConfig) &&
@@ -267,7 +266,7 @@ The method for moving to the content of another route differs between the fallba
    ```ts
    (async function setupRouter() {
      const convertedRouteConfig = convertRouteConfig(routeConfig);
-     await registerRouteComponent();
+     await waitRegisteringRouteComponent();
      const mainRouteManager = document.querySelector("route-manager");
      mainRouteManager &&
        mainRouteManager.setRouteConfig(convertedRouteConfig) &&
@@ -287,7 +286,7 @@ The method for moving to the content of another route differs between the fallba
    ```ts
    (async function setupRouter() {
      const convertedRouteConfig = convertRouteConfig(routeConfig);
-     await registerRouteComponent();
+     await waitRegisteringRouteComponent();
      const mainRouteManager = document.querySelector("route-manager");
      mainRouteManager &&
        mainRouteManager.setRouteConfig(convertedRouteConfig) &&
@@ -715,8 +714,7 @@ The content of each route is placed as a child element of the outlet element. Th
 <route-manager>
   <div data-outlet="main"></div>
   <template data-fallbackid="PageNotFound">
-    <h1>404</h1>
-    <p>Page not found</p>
+    <h1>404: Page not found</h1>
   </template>
   <template data-routeid="home">
     <h1>Home</h1>

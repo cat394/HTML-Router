@@ -138,8 +138,7 @@ npx jsr add @htmllover/html-router
    ```html
    <route-manager>
      <template data-fallbackid="PageNotFound">
-       <h1>404</h1>
-       <p>Page not found</p>
+       <h1>404: Page not found</h1>
      </template>
      <template data-routeid="home">
        <h1>Home</h1>
@@ -167,7 +166,7 @@ npx jsr add @htmllover/html-router
       カスタム要素は非同期で読み込まれるため、`<route-manager>`がちゃんとカスタム要素として登録し終わってから`<route-manager>`にルート設定オブジェクトを渡さなくてはいけません。そのため、以下のコードを追加します。注記：`<route-link>`は後で使います。
 
       ```ts
-      const registerRouteComponent = async () => {
+      const waitRegisteringRouteComponent = async () => {
         try {
           await Promise.allSettled([
             customElements.whenDefined("route-manager"),
@@ -185,7 +184,7 @@ npx jsr add @htmllover/html-router
       ```ts
       (async function setupRouter() {
         const convertedRouteConfig = convertRouteConfig(routeConfig);
-        await registerRouteComponent();
+        await waitRegisteringRouteComponent();
         const mainRouteManager = document.querySelector("route-manager");
         mainRouteManager &&
           mainRouteManager.setRouteConfig(convertedRouteConfig) &&
@@ -266,7 +265,7 @@ npx jsr add @htmllover/html-router
    ```ts
    (async function setupRouter() {
      const convertedRouteConfig = convertRouteConfig(routeConfig);
-     await registerRouteComponent();
+     await waitRegisteringRouteComponent();
      const mainRouteManager = document.querySelector("route-manager");
      mainRouteManager &&
        mainRouteManager.setRouteConfig(convertedRouteConfig) &&
@@ -285,7 +284,7 @@ npx jsr add @htmllover/html-router
    ```ts
    (async function setupRouter() {
      const convertedRouteConfig = convertRouteConfig(routeConfig);
-     await registerRouteComponent();
+     await waitRegisteringRouteComponent();
      const mainRouteManager = document.querySelector("route-manager");
      mainRouteManager &&
        mainRouteManager.setRouteConfig(convertedRouteConfig) &&
@@ -718,8 +717,7 @@ const routeConfig = {
 <route-manager>
   <div data-outlet="main"></div>
   <template data-fallbackid="PageNotFound">
-    <h1>404</h1>
-    <p>Page not found</p>
+    <h1>404 Page not found</h1>
   </template>
   <template data-routeid="home">
     <h1>Home</h1>
