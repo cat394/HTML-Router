@@ -216,10 +216,7 @@ export class RouteManager<
     if (this._isFallback) {
       this.routeTemplate = getFallbackTemplate(newRouteid);
       this.routeData = getRouteData(this.fallbackMap, newRouteid);
-      this._clone = document.importNode(
-        this.routeTemplate.content,
-        true,
-      );
+      this._clone = document.importNode(this.routeTemplate.content, true);
       this.gotoFallback(newRouteid);
       this._isFallback = false;
       throw new RoutingError({
@@ -230,10 +227,7 @@ export class RouteManager<
     } else {
       this.routeTemplate = getRouteTemplate(newRouteid);
       this.routeData = getRouteData(this.routeMap, newRouteid);
-      this._clone = document.importNode(
-        this.routeTemplate.content,
-        true,
-      );
+      this._clone = document.importNode(this.routeTemplate.content, true);
     }
   }
 
@@ -489,12 +483,17 @@ export class RouteManager<
   ): RouterPublicFunctionResult {
     try {
       const navigationId = this._prepareRouteChange();
-      this._routeParamsMap = paramsObj
-        ? new Map(Object.entries(paramsObj))
-        : new Map();
+      /**
+       * At initialization, the routeParamsMap is already created from the path in the URL, so the following operations are not necessary.
+       */
+      if (this._isInitialized) {
+        this._routeParamsMap = paramsObj
+          ? new Map(Object.entries(paramsObj))
+          : new Map();
+      }
       this._updateNextRouteDataCache(routeid);
-      const path = this._generateTargetRoutePath();
       if (!this._isPopstateEvent) {
+        const path = this._generateTargetRoutePath();
         updateHistory(routeid, this._routeParamsMap, path);
       }
       this._isPopstateEvent = false;
@@ -591,7 +590,6 @@ export class RouteManager<
    */
   private _triggerLifecycleEvent(hookName: LIFE_CYCLE): void {
     const routeHook = this.routeData[hookName];
-
     const hookContext: RouteHookContext = {
       templateContent: this.routeTemplate.content,
       clone: this.clone,
