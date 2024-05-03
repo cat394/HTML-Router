@@ -1,6 +1,6 @@
 {
   "name": "html-router",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A simple SPA router that does not use any framework.",
   "main": "index.ts",
   "type": "module",
