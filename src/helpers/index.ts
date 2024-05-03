@@ -77,16 +77,18 @@ export const buildPathFromRouteParams = (
   if (countOfParamsMap === 0) {
     return routePath.staticParts[0].slice(0, -PATH_SEPARATOR.length);
   }
-  const pathLength = countOfParamsMap * 2;
-  const splitPathIntoSegments = routePath.splitStringified;
-  splitPathIntoSegments.length = pathLength;
+  const splitPathIntoSegments: (string | undefined)[] =
+    routePath.splitStringified;
   for (const [paramName, dynamicPathIndex] of routePath.params) {
     const paramValue = paramsMap.get(paramName);
-    if (paramValue) {
-      splitPathIntoSegments[dynamicPathIndex] = encodeURIComponent(paramValue);
-    }
+
+    splitPathIntoSegments[dynamicPathIndex] = paramValue
+      ? encodeURIComponent(paramValue)
+      : undefined;
   }
-  return splitPathIntoSegments.join(PATH_SEPARATOR);
+  return splitPathIntoSegments
+    .filter((segment) => !(segment === undefined))
+    .join(PATH_SEPARATOR);
 };
 
 export const path = <PathParamNames extends [...string[]] = any>(
