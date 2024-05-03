@@ -67,11 +67,11 @@ const onBeforeNavigateAtHome: Hook = ({
 };
 const onLoadAtUsers: Hook = ({
   routeContext: { params },
-  clone: clonedNode,
+  clone,
 }: RouteHookContext<(typeof routeConfig)["users"]>) => {
   const username = params.get("username");
   const subpage = params.get("subpage");
-  const title = clonedNode.querySelector("#title");
+  const title = clone.querySelector("#title");
   if (!title) return;
 
   function whenUserPage() {
