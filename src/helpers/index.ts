@@ -160,7 +160,7 @@ export const getRouteTemplate = (routeid: string) =>
 
 export const getFallbackTemplate = (fallbackId: string) =>
   document.querySelector<HTMLTemplateElement>(
-    `template[data-fallback-id="${fallbackId}"]`,
+    `template[data-fallbackid="${fallbackId}"]`,
   );
 
 export const getOutletElement = (routeMaster: RouteManager) =>
