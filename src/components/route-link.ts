@@ -10,8 +10,7 @@ import {
 export class RouteLink extends HTMLElement {
   public routeParams: ParamsObj = {};
 
-  constructor() {
-    super();
+  connectedCallback() {
     this.setAttribute("role", "link");
     this.setAttribute("tabindex", "0");
   }
