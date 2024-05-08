@@ -41,7 +41,7 @@ export type PathFunctionResult<
   stringified: string;
   splitStringified: string[];
   staticParts: TemplateStringsArray;
-  hasDynamicPath: boolean;
+  hasDynamicPart: boolean;
   firstSegment: string;
   params: [PathParamNames[number], number][];
 };

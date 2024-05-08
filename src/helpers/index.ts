@@ -95,7 +95,7 @@ export const path = <PathParamNames extends [...string[]] = any>(
   staticParts: TemplateStringsArray,
   ...paramNames: PathParamNames
 ): PathFunctionResult<PathParamNames> => {
-  const hasDynamicPath = paramNames.length > 0;
+  const hasDynamicPart = paramNames.length > 0;
   const firstSegment = getPageName(staticParts[0]);
   let stringified = "";
   staticParts.forEach((staticPart, index) => {
@@ -117,7 +117,7 @@ export const path = <PathParamNames extends [...string[]] = any>(
     stringified,
     splitStringified,
     staticParts,
-    hasDynamicPath,
+    hasDynamicPart,
     firstSegment,
     params,
   };

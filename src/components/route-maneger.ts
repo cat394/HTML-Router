@@ -393,7 +393,7 @@ export class RouteManager<
         this.routeMap,
         firstSegment,
       ) as StringKeysOnly<RouteConfigType>;
-      if (this.routeData.path.hasDynamicPath) {
+      if (this.routeData.path.hasDynamicPart) {
         this._routeParamsMap = extractParamsMapFromCurrentPath(
           pathname,
           this.routeData.path.params,
@@ -515,7 +515,7 @@ export class RouteManager<
    */
   private _generateTargetRoutePath(): string {
     let targetPath = "";
-    if (this.routeData.path.hasDynamicPath) {
+    if (this.routeData.path.hasDynamicPart) {
       targetPath = buildPathFromRouteParams(
         this.routeData.path,
         this._routeParamsMap,
